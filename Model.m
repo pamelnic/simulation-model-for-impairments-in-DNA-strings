@@ -1,21 +1,21 @@
-% -------------------------------
+
 % Monte Carlo simulation settings
-% -------------------------------
-numTrials = 100;   % Number of Monte Carlo trials
+
+numTrials = 10000;   %  trials
 
 % Reference values
-ref_del = 0.0288;
-ref_ins = 0.0211;
-ref_sub = 0.0171;
+ref_del = 0.0295;
+ref_ins = 0.0216;
+ref_sub = 0.0175;
 
 % Preallocate arrays
 all_del = zeros(numTrials,1);
 all_ins = zeros(numTrials,1);
 all_sub = zeros(numTrials,1);
 
-% -------------------------------
+
 % Monte Carlo loop
-% -------------------------------
+
 for t = 1:numTrials
     [summary_del, summary_ins, summary_sub] = iid_channel();
 
@@ -24,16 +24,14 @@ for t = 1:numTrials
     all_sub(t) = summary_sub;
 end
 
-% -------------------------------
 % Store raw results
-% -------------------------------
+
 results.all_del = all_del;
 results.all_ins = all_ins;
 results.all_sub = all_sub;
 
-% -------------------------------
+
 % Statistical evaluation
-% -------------------------------
 
 % Means
 results.mean_del = mean(all_del);
@@ -77,14 +75,8 @@ results.tstat_del = (results.mean_del - ref_del) / (results.std_del / sqrt(numTr
 results.tstat_ins = (results.mean_ins - ref_ins) / (results.std_ins / sqrt(numTrials));
 results.tstat_sub = (results.mean_sub - ref_sub) / (results.std_sub / sqrt(numTrials));
 
-% p-values for two-sided t-test
-results.pval_del = 2 * (1 - tcdf(abs(results.tstat_del), numTrials - 1));
-results.pval_ins = 2 * (1 - tcdf(abs(results.tstat_ins), numTrials - 1));
-results.pval_sub = 2 * (1 - tcdf(abs(results.tstat_sub), numTrials - 1));
+% Command window output
 
-% -------------------------------
-% Fancy command window output
-% -------------------------------
 fprintf('\n');
 fprintf('===============================================================\n');
 fprintf('        STATISTICAL EVALUATION OF MONTE CARLO SIMULATION       \n');
@@ -124,9 +116,8 @@ fprintf('  Substitutions  : [%.6f, %.6f]\n\n', results.ci_sub(1), results.ci_sub
 
 fprintf('===============================================================\n\n');
 
-% -------------------------------
 % Plot 1: Histogram of deletions
-% -------------------------------
+
 figure;
 h = histogram(all_del);
 xlabel('Deletion value');
@@ -152,9 +143,9 @@ for i = 1:length(binCounts)
 end
 hold off;
 
-% -------------------------------
+
 % Plot 2: Histogram of insertions
-% -------------------------------
+
 figure;
 h = histogram(all_ins);
 xlabel('Insertion value');
@@ -179,9 +170,9 @@ for i = 1:length(binCounts)
 end
 hold off;
 
-% -------------------------------
+
 % Plot 3: Histogram of substitutions
-% -------------------------------
+
 figure;
 h = histogram(all_sub);
 xlabel('Substitution value');
